@@ -1,0 +1,10 @@
+displayName: Rpt Handler
+type: middleware
+
+import: github.com/Baseflow/traefik-rpthandler
+
+summary: 'Transform Authorization header bearer token into an RPT token'
+
+testData:
+  Audience: api
+  Keycloak: https://auth.example.com/realms/TwinTopics/protocol/openid-connect/token
