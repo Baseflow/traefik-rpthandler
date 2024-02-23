@@ -1,5 +1,5 @@
 // Package rpthandler plugin.
-package rpthandler
+package traefik_rpthandler
 
 import (
 	"context"
