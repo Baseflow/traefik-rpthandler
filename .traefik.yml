@@ -1,7 +1,7 @@
 displayName: Rpt Handler
 type: middleware
 
-import: github.com/Baseflow/traefik-rpthandler
+import: github.com/Baseflow/traefik_rpthandler
 
 summary: 'Transform Authorization header bearer token into an RPT token'
 
