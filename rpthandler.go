@@ -31,10 +31,14 @@ type RptHandler struct {
 }
 
 type RptTokenBody struct {
-	Upgraded     bool
-	Access_token string
-	Token_type   string
-	Error        string
+	Upgraded           bool
+	Access_token       string
+	Expires_in         int
+	Refresh_expires_in int
+	Refresh_token      string
+	Token_type         string
+	Not_before_policy  int
+	Error              string
 }
 
 // New created a new RptHandler plugin.
