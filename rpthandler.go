@@ -57,6 +57,11 @@ func New(ctx context.Context, next http.Handler, config *Config, name string) (h
 func (a *RptHandler) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	var currentAuthHeader = req.Header.Get("Authorization")
 
+	if currentAuthHeader == "" {
+		a.next.ServeHTTP(rw, req)
+		return
+	}
+
 	data := url.Values{}
 	data.Set("grant_type", "urn:ietf:params:oauth:grant-type:uma-ticket")
 	data.Set("audience", a.audience)
