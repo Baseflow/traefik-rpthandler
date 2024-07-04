@@ -57,7 +57,7 @@ func New(ctx context.Context, next http.Handler, config *Config, name string) (h
 func (a *RptHandler) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	var currentAuthHeader = req.Header.Get("Authorization")
 
-	if currentAuthHeader == "" {
+	if currentAuthHeader == "" || req.Method == "OPTIONS" {
 		a.next.ServeHTTP(rw, req)
 		return
 	}
