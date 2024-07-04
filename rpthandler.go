@@ -56,6 +56,7 @@ func New(ctx context.Context, next http.Handler, config *Config, name string) (h
 
 func (a *RptHandler) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	var currentAuthHeader = req.Header.Get("Authorization")
+	var currentOrigin = req.Header.Get("Origin")
 
 	if currentAuthHeader == "" || req.Method == "OPTIONS" {
 		a.next.ServeHTTP(rw, req)
@@ -70,6 +71,7 @@ func (a *RptHandler) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		// handle error
 		log.Println("Could not create new request", err.Error())
+		rw.Header().Set("Access-Control-Allow-Origin", currentOrigin)
 		rw.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -80,6 +82,7 @@ func (a *RptHandler) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	resp, err := client.Do(newRequest)
 	if err != nil {
 		log.Println("Could not execute request", err.Error())
+		rw.Header().Set("Access-Control-Allow-Origin", currentOrigin)
 		rw.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -88,6 +91,7 @@ func (a *RptHandler) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Println("Could not read body from response", err.Error())
+		rw.Header().Set("Access-Control-Allow-Origin", currentOrigin)
 		rw.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -98,12 +102,14 @@ func (a *RptHandler) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	newAuthorizationHeader := "Bearer " + rptTokenBody.Access_token
 	if err != nil {
 		log.Println("Unmarshalling failed :", err.Error())
+		rw.Header().Set("Access-Control-Allow-Origin", currentOrigin)
 		rw.WriteHeader(http.StatusForbidden)
 		return
 	}
 	if len(rptTokenBody.Error) > 0 {
 		//newAuthorizationHeader = b64.StdEncoding.EncodeToString(body)
 		log.Println("Request failed :", rptTokenBody.Error)
+		rw.Header().Set("Access-Control-Allow-Origin", currentOrigin)
 		rw.WriteHeader(http.StatusForbidden)
 		return
 	}
