@@ -107,6 +107,13 @@ func (a *RptHandler) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 	if len(rptTokenBody.Error) > 0 {
+		if strings.Trim(rptTokenBody.Error, " ") == "invalid_grant" {
+			// In case the access token has expired, sent a 401 instead of a 403
+			log.Println("Invalid grant :", rptTokenBody.Error)
+			rw.Header().Set("Access-Control-Allow-Origin", currentOrigin)
+			rw.WriteHeader(http.StatusUnauthorized)
+			return
+		}
 		//newAuthorizationHeader = b64.StdEncoding.EncodeToString(body)
 		log.Println("Request failed :", rptTokenBody.Error)
 		rw.Header().Set("Access-Control-Allow-Origin", currentOrigin)
